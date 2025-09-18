@@ -1,28 +1,31 @@
-<script setup></script>
+<script setup>
+import Header from './components/Header.vue'
+import AnimeCard from './components/AnimeCard.vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const animeList = ref([])
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('https://api.jikan.moe/v4/top/anime')
+    animeList.value = response.data.data
+  } catch (err) {
+    console.log(err)
+  }
+})
+</script>
 
 <template>
-  <div class="bg-[#0E0F13] w-4/5 m-auto h-screen rounded-xl shadow-xl mt-14">
-    <header class="flex justify-between border-b border-slate-600 px-8 py-8">
-      <div class="flex items-center gap-4">
-        <img class="w-20" src="/logo.png" alt="" />
-        <div class="text-[#DAE5FF] font-bold">
-          <h2 class="text-xl font-bold uppercase">Akashi</h2>
-          <p class="text-slate-400">Anime List</p>
-        </div>
-      </div>
+  <div class="bg-[#0E0F13] w-4/5 m-auto h-full rounded-xl shadow-xl mt-14">
+    <Header />
 
-      <ul class="text-[#DAE5FF] flex items-center gap-10">
-        <li class="flex items-center gap-3">
-          <img src="/heart.svg" alt="" />
-          <b>Saved</b>
-        </li>
-
-        <li class="flex items-center gap-3">
-          <img src="/profile.svg" alt="" />
-          <b>Profile</b>
-        </li>
-      </ul>
-    </header>
+    <div class="gap-8 p-8 overflow-y-auto h-full grid grid-cols-4">
+      <AnimeCard class="gap-5"
+      v-for="anime in animeList"
+      :key="anime.mal_id"
+      :anime="anime" />
+    </div>
   </div>
 </template>
 
